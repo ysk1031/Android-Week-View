@@ -55,6 +55,7 @@ public class WeekView extends View {
     private int mHeaderSeparatorColorGravity;
     private int mHeaderSeparator = 12;
     private int mHeaderSeparatorColor;
+    private Paint mDaySeparatorPaint;
 
     private enum Direction {
         NONE, LEFT, RIGHT, VERTICAL
@@ -161,6 +162,15 @@ public class WeekView extends View {
     private DateTimeInterpreter mDateTimeInterpreter;
     private ScrollListener mScrollListener;
     private boolean mIsScrollHorizontalDisable = false;
+
+    private int mDaySeparatorColor = Color.rgb(230, 230, 230);
+    private int mDaySeparatorWidth = 2;
+
+    private int mBorderEventColor = Color.rgb(230, 230, 230);
+    private int mBorderEventThickness = 2;
+    private int mBorderEventPosition = PositionType.LEFT;
+    private Paint mBorderEventPaint;
+    private boolean mShowBorderEvent = false;
 
     private MetricAffectingSpan mSpanEvent = null;
 
@@ -394,8 +404,15 @@ public class WeekView extends View {
             mScrollDuration = a.getInt(R.styleable.WeekView_scrollDuration, mScrollDuration);
             mIsScrollHorizontalDisable = a.getBoolean(R.styleable.WeekView_disableScrollHorizontal, mIsScrollHorizontalDisable);
             mHeaderSeparator = a.getDimensionPixelSize(R.styleable.WeekView_headerRowSeparator, mHeaderSeparator);
-            mHeaderSeparatorColorGravity = a.getInteger(R.styleable.WeekView_headerRowSeparatorColorGravity, GravityPaddingType.BOTTOM);
+            mHeaderSeparatorColorGravity = a.getInteger(R.styleable.WeekView_headerRowSeparatorColorGravity, PositionType.BOTTOM);
             mHeaderSeparatorColor = a.getColor(R.styleable.WeekView_headerRowSeparatorColor, DEFAULT_NO_COLOR_FOR_PADDING);
+            mDaySeparatorColor = a.getColor(R.styleable.WeekView_daySeparatorColor, mDaySeparatorColor);
+            mDaySeparatorWidth = a.getColor(R.styleable.WeekView_daySeparatorWidth, mDaySeparatorWidth);
+
+            mBorderEventColor = a.getColor(R.styleable.WeekView_borderEventColor, mBorderEventColor);
+            mBorderEventThickness = a.getDimensionPixelSize(R.styleable.WeekView_borderEventThickness, mBorderEventThickness);
+            mBorderEventPosition = a.getInteger(R.styleable.WeekView_borderEventPosition, mBorderEventPosition);
+            mShowBorderEvent = a.getBoolean(R.styleable.WeekView_showBorderEvent, mShowBorderEvent);
         } finally {
             a.recycle();
         }
@@ -419,7 +436,7 @@ public class WeekView extends View {
         Rect rect = new Rect();
         mTimeTextPaint.getTextBounds("00 PM", 0, "00 PM".length(), rect);
         mTimeTextHeight = rect.height();
-        mHeaderMarginBottom = mTimeTextHeight / 2;
+        mHeaderMarginBottom = 0;// mTimeTextHeight / 2;
         initTextTimeWidth();
 
         // Measure settings for header row.
@@ -452,6 +469,15 @@ public class WeekView extends View {
         mHourSeparatorPaint.setStyle(Paint.Style.STROKE);
         mHourSeparatorPaint.setStrokeWidth(mHourSeparatorHeight);
         mHourSeparatorPaint.setColor(mHourSeparatorColor);
+
+        mDaySeparatorPaint = new Paint();
+        mDaySeparatorPaint.setColor(mDaySeparatorColor);
+
+        if (mShowBorderEvent) {
+            mBorderEventPaint = new Paint();
+            mBorderEventPaint.setColor(mBorderEventColor);
+
+        }
 
         // Prepare the "now" line color paint
         mNowLinePaint = new Paint();
@@ -486,7 +512,7 @@ public class WeekView extends View {
         // Set default event color.
         mDefaultEventColor = Color.parseColor("#9fc6e7");
 
-        if (!(mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM || mHeaderSeparatorColorGravity == GravityPaddingType.TOP)) {
+        if (!(mHeaderSeparatorColorGravity == PositionType.BOTTOM || mHeaderSeparatorColorGravity == PositionType.TOP)) {
             throw new IllegalArgumentException("headerRowPaddingColorGravity must be bottom or top");
         }
 
@@ -725,6 +751,7 @@ public class WeekView extends View {
                 }
                 else {
                     canvas.drawRect(start, mHeaderHeight + mHeaderRowPadding * 2 + mTimeTextHeight / 2 + mHeaderMarginBottom, startPixel + mWidthPerDay, getHeight(), sameDay ? mTodayBackgroundPaint : mDayBackgroundPaint);
+                    canvas.drawRect(start, mHeaderHeight + mHeaderRowPadding * 2 + mTimeTextHeight / 2 + mHeaderMarginBottom, startPixel + mDaySeparatorWidth , getHeight(), mDaySeparatorPaint);
                 }
             }
 
@@ -767,7 +794,7 @@ public class WeekView extends View {
         if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
             Paint paint = new Paint();
             paint.setColor(mHeaderSeparatorColor);
-            if (mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM) {
+            if (mHeaderSeparatorColorGravity == PositionType.BOTTOM) {
                 canvas.drawRect(0, mHeaderHeight + mHeaderRowPadding * 2 - mHeaderSeparator, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, paint);
             } else {
                 canvas.drawRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderSeparator, paint);
@@ -781,7 +808,7 @@ public class WeekView extends View {
         if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
             Paint paint = new Paint();
             paint.setColor(mHeaderSeparatorColor);
-            if (mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM) {
+            if (mHeaderSeparatorColorGravity == PositionType.BOTTOM) {
                 canvas.drawRect(0, mHeaderHeight + mHeaderRowPadding * 2 - mHeaderSeparator, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, paint);
             } else {
                 canvas.drawRect(0, 0, getWidth(), mHeaderSeparator, paint);
@@ -876,6 +903,23 @@ public class WeekView extends View {
                         mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
                         canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
                         drawEventTitle(mEventRects.get(i).event, mEventRects.get(i).rectF, canvas, top, left);
+                        if (mShowBorderEvent) {
+                            switch (mBorderEventPosition) {
+                                case PositionType.BOTTOM:
+                                    canvas.drawRect(left, bottom + mBorderEventThickness, right, bottom, mBorderEventPaint);
+                                    break;
+                                case PositionType.LEFT:
+                                    canvas.drawRect(left, top, left + mBorderEventThickness, bottom, mBorderEventPaint);
+                                    break;
+                                case PositionType.RIGHT:
+                                    canvas.drawRect(right - mBorderEventThickness, top, right, bottom, mBorderEventPaint);
+                                    break;
+                                case PositionType.TOP:
+                                    canvas.drawRect(left, top, right, top + mBorderEventThickness, mBorderEventPaint);
+                                    break;
+
+                            }
+                        }
                     }
                     else
                         mEventRects.get(i).rectF = null;

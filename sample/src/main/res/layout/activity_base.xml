@@ -13,18 +13,21 @@
         app:eventTextColor="@android:color/white"
         app:textSize="12sp"
         app:hourHeight="60dp"
-        app:headerColumnPadding="8dp"
         app:headerColumnTextColor="@color/toolbar_text"
         app:headerRowPadding="20dp"
         app:headerRowSeparator="8dp"
         app:headerRowSeparatorColor="@color/toolbar_text"
         app:headerRowSeparatorColorGravity="bottom"
-        app:columnGap="8dp"
         app:noOfVisibleDays="7"
+        app:columnGap="0dp"
         app:headerRowBackgroundColor="@color/toolbar"
-        app:dayBackgroundColor="#05000000"
+        app:dayBackgroundColor="#fff"
         app:todayBackgroundColor="#1848adff"
         app:headerColumnBackground="#ffffffff"
-        app:todayHeaderTextColor="@color/accent" />
+        app:daySeparatorColor="@color/accent"
+        app:todayHeaderTextColor="@color/accent"
+        app:showBorderEvent="true"
+        app:borderEventColor="@color/event_color_border"
+        app:borderEventThickness="5dp"/>
 
 </RelativeLayout>

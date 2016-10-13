@@ -58,5 +58,18 @@
         <attr name="allDayEventHeight" format="dimension"/>
         <attr name="scrollDuration" format="integer"/>
         <attr name="disableScrollHorizontal" format="boolean"/>
+        <attr name="daySeparatorColor" format="color"/>
+        <attr name="daySeparatorWidth" format="dimension"/>
+
+
+        <attr name="showBorderEvent" format="boolean"/>
+        <attr name="borderEventColor" format="color"/>
+        <attr name="borderEventThickness" format="dimension"/>
+        <attr name="borderEventPosition" format="dimension">
+            <enum name="bottom" value="10"/>
+            <enum name="top" value="20"/>
+            <enum name="left" value="40"/>
+            <enum name="right" value="80"/>
+        </attr>
     </declare-styleable>
 </resources>
