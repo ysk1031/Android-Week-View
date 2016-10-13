@@ -1,5 +1,6 @@
 package com.alamkanak.weekview.sample;
 
+import android.content.Context;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,10 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
+import uk.co.chrisjenx.calligraphy.TypefaceUtils;
 
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
@@ -52,6 +57,18 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         // Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
 
+        mWeekView.setTypefaceHeader(TypefaceUtils.load(getAssets(), "fonts/Orkney-Bold.otf"));
+        mWeekView.setTypefaceTime(TypefaceUtils.load(getAssets(), "fonts/Orkney-Light.otf"));
+
+        mWeekView.setSpanEvent(new CalligraphyTypefaceSpan(TypefaceUtils.load(getAssets(), "fonts/Orkney-Light.otf")));
+
+        mWeekViewType = TYPE_WEEK_VIEW;
+        mWeekView.setNumberOfVisibleDays(7);
+
+        // Lets change some dimensions to best fit the view.
+        mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+        mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
@@ -162,5 +179,10 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
     public WeekView getWeekView() {
         return mWeekView;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }

@@ -21,6 +21,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -155,12 +156,31 @@ public class WeekView extends View {
     private ScrollListener mScrollListener;
     private boolean mIsScrollHorizontalDisable = false;
 
+    private MetricAffectingSpan mSpanEvent = null;
+
     public boolean isScrollHorizontalDisable() {
         return mIsScrollHorizontalDisable;
     }
 
     public void setScrollHorizontalDisable(boolean scrollHorizontalDisable) {
         mIsScrollHorizontalDisable = scrollHorizontalDisable;
+    }
+
+    public void setTypefaceHeader(Typeface typefaceHeader) {
+        if (typefaceHeader == null) {
+            mHeaderTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        } else {
+            mHeaderTextPaint.setTypeface(typefaceHeader);
+        }
+    }
+
+    public void setTypefaceTime(Typeface typefaceTime) {
+        mTimeTextPaint.setTypeface(typefaceTime);
+        initTextTimeWidth();
+    }
+
+    public void setSpanEvent(MetricAffectingSpan typefaceEvent) {
+        mSpanEvent = typefaceEvent;
     }
 
     private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
@@ -748,6 +768,7 @@ public class WeekView extends View {
             String dayLabel = getDateTimeInterpreter().interpretDate(day);
             if (dayLabel == null)
                 throw new IllegalStateException("A DateTimeInterpreter must not return null date");
+
             canvas.drawText(dayLabel, startPixel + mWidthPerDay / 2, mHeaderTextHeight + mHeaderRowPadding, sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint);
             drawAllDayEvents(day, startPixel, canvas);
             startPixel += mWidthPerDay + mColumnGap;
@@ -891,7 +912,13 @@ public class WeekView extends View {
         SpannableStringBuilder bob = new SpannableStringBuilder();
         if (event.getName() != null) {
             bob.append(event.getName());
-            bob.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, bob.length(), 0);
+            MetricAffectingSpan styleSpan;
+            if (mSpanEvent != null) {
+                styleSpan = mSpanEvent;
+            } else {
+                styleSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+            }
+            bob.setSpan(styleSpan, 0, bob.length(), 0);
             bob.append(' ');
         }
 
