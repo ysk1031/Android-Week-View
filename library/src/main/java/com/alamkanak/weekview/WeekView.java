@@ -874,6 +874,7 @@ public class WeekView extends View {
      */
     private void drawEvents(Calendar date, float startFromPixel, Canvas canvas) {
         if (mEventRects != null && mEventRects.size() > 0) {
+            Calendar previousDate = null;
             for (int i = 0; i < mEventRects.size(); i++) {
                 if (isSameDay(mEventRects.get(i).event.getStartTime(), date) && !mEventRects.get(i).event.isAllDay()){
 
@@ -903,23 +904,27 @@ public class WeekView extends View {
                         mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
                         canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
                         drawEventTitle(mEventRects.get(i).event, mEventRects.get(i).rectF, canvas, top, left);
-                        if (mShowBorderEvent) {
-                            switch (mBorderEventPosition) {
-                                case PositionType.BOTTOM:
-                                    canvas.drawRect(left, bottom + mBorderEventThickness, right, bottom, mBorderEventPaint);
-                                    break;
-                                case PositionType.LEFT:
-                                    canvas.drawRect(left, top, left + mBorderEventThickness, bottom, mBorderEventPaint);
-                                    break;
-                                case PositionType.RIGHT:
-                                    canvas.drawRect(right - mBorderEventThickness, top, right, bottom, mBorderEventPaint);
-                                    break;
-                                case PositionType.TOP:
-                                    canvas.drawRect(left, top, right, top + mBorderEventThickness, mBorderEventPaint);
-                                    break;
+                        if (previousDate == null || !isSameDay(previousDate, mEventRects.get(i).event.getStartTime())) {
+                            if (mShowBorderEvent) {
+                                switch (mBorderEventPosition) {
+                                    case PositionType.BOTTOM:
+                                        canvas.drawRect(left, bottom + mBorderEventThickness, right, bottom, mBorderEventPaint);
+                                        break;
+                                    case PositionType.LEFT:
+                                        canvas.drawRect(left, top, left + mBorderEventThickness, bottom, mBorderEventPaint);
+                                        break;
+                                    case PositionType.RIGHT:
+                                        canvas.drawRect(right - mBorderEventThickness, top, right, bottom, mBorderEventPaint);
+                                        break;
+                                    case PositionType.TOP:
+                                        canvas.drawRect(left, top, right, top + mBorderEventThickness, mBorderEventPaint);
+                                        break;
 
+                                }
                             }
+                            previousDate = mEventRects.get(i).event.getStartTime();
                         }
+
                     }
                     else
                         mEventRects.get(i).rectF = null;
