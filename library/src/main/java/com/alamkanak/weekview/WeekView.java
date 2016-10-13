@@ -42,13 +42,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import static com.alamkanak.weekview.WeekViewUtil.*;
+import static com.alamkanak.weekview.WeekViewUtil.isSameDay;
+import static com.alamkanak.weekview.WeekViewUtil.today;
 
 /**
  * Created by Raquib-ul-Alam Kanak on 7/21/2014.
  * Website: http://alamkanak.github.io/
  */
 public class WeekView extends View {
+
+    public static final int DEFAULT_NO_COLOR_FOR_PADDING = -1;
+    private int mHeaderSeparatorColorGravity;
+    private int mHeaderSeparator = 12;
+    private int mHeaderSeparatorColor;
 
     private enum Direction {
         NONE, LEFT, RIGHT, VERTICAL
@@ -387,6 +393,9 @@ public class WeekView extends View {
             mAllDayEventHeight = a.getDimensionPixelSize(R.styleable.WeekView_allDayEventHeight, mAllDayEventHeight);
             mScrollDuration = a.getInt(R.styleable.WeekView_scrollDuration, mScrollDuration);
             mIsScrollHorizontalDisable = a.getBoolean(R.styleable.WeekView_disableScrollHorizontal, mIsScrollHorizontalDisable);
+            mHeaderSeparator = a.getDimensionPixelSize(R.styleable.WeekView_headerRowSeparator, mHeaderSeparator);
+            mHeaderSeparatorColorGravity = a.getInteger(R.styleable.WeekView_headerRowSeparatorColorGravity, GravityPaddingType.BOTTOM);
+            mHeaderSeparatorColor = a.getColor(R.styleable.WeekView_headerRowSeparatorColor, DEFAULT_NO_COLOR_FOR_PADDING);
         } finally {
             a.recycle();
         }
@@ -476,6 +485,10 @@ public class WeekView extends View {
 
         // Set default event color.
         mDefaultEventColor = Color.parseColor("#9fc6e7");
+
+        if (!(mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM || mHeaderSeparatorColorGravity == GravityPaddingType.TOP)) {
+            throw new IllegalArgumentException("headerRowPaddingColorGravity must be bottom or top");
+        }
 
         mScaleDetector = new ScaleGestureDetector(mContext, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
@@ -746,15 +759,35 @@ public class WeekView extends View {
             startPixel += mWidthPerDay + mColumnGap;
         }
 
+
+
         // Hide everything in the first cell (top left corner).
         canvas.clipRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
         canvas.drawRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, mHeaderBackgroundPaint);
-
+        if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
+            Paint paint = new Paint();
+            paint.setColor(mHeaderSeparatorColor);
+            if (mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM) {
+                canvas.drawRect(0, mHeaderHeight + mHeaderRowPadding * 2 - mHeaderSeparator, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, paint);
+            } else {
+                canvas.drawRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderSeparator, paint);
+            }
+        }
         // Clip to paint header row only.
         canvas.clipRect(mHeaderColumnWidth, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
 
         // Draw the header background.
         canvas.drawRect(0, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, mHeaderBackgroundPaint);
+        if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
+            Paint paint = new Paint();
+            paint.setColor(mHeaderSeparatorColor);
+            if (mHeaderSeparatorColorGravity == GravityPaddingType.BOTTOM) {
+                canvas.drawRect(0, mHeaderHeight + mHeaderRowPadding * 2 - mHeaderSeparator, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, paint);
+            } else {
+                canvas.drawRect(0, 0, getWidth(), mHeaderSeparator, paint);
+            }
+        }
+
 
         // Draw the header row texts.
         startPixel = startFromPixel;

@@ -17,6 +17,12 @@
         <attr name="eventTextSize" format="dimension"/>
         <attr name="headerColumnPadding" format="dimension"/>
         <attr name="headerRowPadding" format="dimension"/>
+        <attr name="headerRowSeparator" format="dimension"/>
+        <attr name="headerRowSeparatorColor" format="color"/>
+        <attr name="headerRowSeparatorColorGravity" format="enum">
+            <enum name="bottom" value="10"/>
+            <enum name="top" value="20"/>
+        </attr>
         <attr name="columnGap" format="dimension"/>
         <attr name="headerColumnTextColor" format="color"/>
         <attr name="noOfVisibleDays" format="integer"/>
