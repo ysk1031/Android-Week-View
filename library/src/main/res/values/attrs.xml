@@ -71,5 +71,7 @@
             <enum name="left" value="40"/>
             <enum name="right" value="80"/>
         </attr>
+
+        <attr name="enableZoom" format="boolean"/>
     </declare-styleable>
 </resources>

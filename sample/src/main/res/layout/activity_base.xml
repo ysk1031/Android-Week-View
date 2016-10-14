@@ -28,6 +28,7 @@
         app:todayHeaderTextColor="@color/accent"
         app:showBorderEvent="true"
         app:borderEventColor="@color/event_color_border"
-        app:borderEventThickness="5dp"/>
+        app:borderEventThickness="5dp"
+        app:enableZoom="false"/>
 
 </RelativeLayout>

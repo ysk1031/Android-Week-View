@@ -56,6 +56,7 @@ public class WeekView extends View {
     private int mHeaderSeparator = 12;
     private int mHeaderSeparatorColor;
     private Paint mDaySeparatorPaint;
+    private boolean mZoomEnabled = true;
 
     private enum Direction {
         NONE, LEFT, RIGHT, VERTICAL
@@ -203,6 +204,7 @@ public class WeekView extends View {
 
         @Override
         public boolean onDown(MotionEvent e) {
+            mScroller.forceFinished(true);
             goToNearestOrigin();
             return true;
         }
@@ -413,6 +415,7 @@ public class WeekView extends View {
             mBorderEventThickness = a.getDimensionPixelSize(R.styleable.WeekView_borderEventThickness, mBorderEventThickness);
             mBorderEventPosition = a.getInteger(R.styleable.WeekView_borderEventPosition, mBorderEventPosition);
             mShowBorderEvent = a.getBoolean(R.styleable.WeekView_showBorderEvent, mShowBorderEvent);
+            mZoomEnabled = a.getBoolean(R.styleable.WeekView_enableZoom, mZoomEnabled);
         } finally {
             a.recycle();
         }
@@ -1944,7 +1947,9 @@ public class WeekView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mScaleDetector.onTouchEvent(event);
+        if (mZoomEnabled) {
+            mScaleDetector.onTouchEvent(event);
+        }
         boolean val = mGestureDetector.onTouchEvent(event);
 
         // Check after call of mGestureDetector, so mCurrentFlingDirection and mCurrentScrollDirection are set.
