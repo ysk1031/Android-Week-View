@@ -129,6 +129,33 @@ You can customize the look of the `WeekView` in xml. Use the following attribute
 - `nowLineThickness`
 - `scrollDuration`
 
+Add header separator
+
+- `headerRowSeparator` display a row separator in header row (dimensions). Default position is at bottom
+- `headerRowSeparatorColor` set the color of the header row separator in header row (color).
+- `headerRowSeparatorColorGravity` set the position of the header row border (bottom or top). Default position is at bottom
+
+Add day separator color
+
+- `daySeparatorColor` set the color of the day separator (color)
+- `daySeparatorWidth` set the width of the day separator color (dimensions)
+
+Custom event display
+
+- `showBorderEvent` set if we should draw border inside an event (boolean).
+- `borderEventColor` set the color of the draw border inside an event (color).
+- `borderEventThickness` set the thickness of the draw border inside an event (dimensions).
+- `borderEventPosition` set the position of the draw border inside an event (bottom, top, left or right).
+
+Enable/Disable zoom
+
+- `enableZoom` enable or disable zoom (boolean). Default is true
+
+Enable/Disable horizontal scroll (useful to show only one week
+
+- `disableScrollHorizontal` enable or disable horizontal scroll (boolean). Default is false
+
+
 Interfaces
 ----------
 
@@ -146,16 +173,29 @@ Use the following interfaces according to your need.
 Sample
 ----------
 
-There is also a [sample app](https://github.com/alamkanak/Android-Week-View/tree/master/sample) to get you started.
+There is also a [sample app](https://github.com/kmenager/Android-Week-View/tree/master/sample) to get you started.
 
 To do
 -------
 
 * Add event touch feedback selector
 * Show events that expand multiple days properly
+* Set custom display take care of text
 
 Changelog
 ---------
+
+**Version 1.3.0**
+
+* Add option to enable or not zooming
+* Add bottom separator for header
+* Add border for day
+* Add border option for event
+* Add support for custom typeface for header date and time.
+* Add support for custom span for event text
+* Add option to prevent horizontal scroll
+* Add source code and javadoc to build gradle
+* Fix also scroll problem when scroll is down
 
 **Version 1.2.6**
 
