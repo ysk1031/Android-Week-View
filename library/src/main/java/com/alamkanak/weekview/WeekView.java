@@ -185,7 +185,7 @@ public class WeekView extends View {
 
     public void setTypefaceHeader(Typeface typefaceHeader) {
         if (typefaceHeader == null) {
-            mHeaderTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            mHeaderTextPaint.setTypeface(Typeface.DEFAULT);
         } else {
             mHeaderTextPaint.setTypeface(typefaceHeader);
         }
@@ -449,7 +449,7 @@ public class WeekView extends View {
         mHeaderTextPaint.setTextSize(mTextSize);
         mHeaderTextPaint.getTextBounds("00 PM", 0, "00 PM".length(), rect);
         mHeaderTextHeight = rect.height();
-        mHeaderTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mHeaderTextPaint.setTypeface(Typeface.DEFAULT);
 
         // Prepare header background paint.
         mHeaderBackgroundPaint = new Paint();
@@ -495,7 +495,7 @@ public class WeekView extends View {
         mTodayHeaderTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTodayHeaderTextPaint.setTextAlign(Paint.Align.CENTER);
         mTodayHeaderTextPaint.setTextSize(mTextSize);
-        mTodayHeaderTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mTodayHeaderTextPaint.setTypeface(Typeface.DEFAULT);
         mTodayHeaderTextPaint.setColor(mTodayHeaderTextColor);
 
         // Prepare event background color.
