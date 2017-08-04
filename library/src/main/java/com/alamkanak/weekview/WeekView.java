@@ -134,7 +134,6 @@ public class WeekView extends View {
     private int mHourSeparatorHeight = 2;
     private int mTodayHeaderTextColor = Color.rgb(39, 137, 228);
     private int mEventTextSize = 12;
-    private int mEventTextColor = Color.BLACK;
     private int mEventPadding = 8;
     private int mHeaderColumnBackgroundColor = Color.WHITE;
     private boolean mIsFirstDraw = true;
@@ -389,7 +388,6 @@ public class WeekView extends View {
             mHourSeparatorHeight = a.getDimensionPixelSize(R.styleable.WeekView_hourSeparatorHeight, mHourSeparatorHeight);
             mTodayHeaderTextColor = a.getColor(R.styleable.WeekView_todayHeaderTextColor, mTodayHeaderTextColor);
             mEventTextSize = a.getDimensionPixelSize(R.styleable.WeekView_eventTextSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mEventTextSize, context.getResources().getDisplayMetrics()));
-            mEventTextColor = a.getColor(R.styleable.WeekView_eventTextColor, mEventTextColor);
             mEventPadding = a.getDimensionPixelSize(R.styleable.WeekView_eventPadding, mEventPadding);
             mHeaderColumnBackgroundColor = a.getColor(R.styleable.WeekView_headerColumnBackground, mHeaderColumnBackgroundColor);
             mDayNameLength = a.getInteger(R.styleable.WeekView_dayNameLength, mDayNameLength);
@@ -509,7 +507,6 @@ public class WeekView extends View {
         // Prepare event text size and color.
         mEventTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
         mEventTextPaint.setStyle(Paint.Style.FILL);
-        mEventTextPaint.setColor(mEventTextColor);
         mEventTextPaint.setTextSize(mEventTextSize);
 
         // Set default event color.
@@ -1017,6 +1014,7 @@ public class WeekView extends View {
 
         // Get text dimensions.
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+        mEventTextPaint.setColor(event.getTextColor() == 0 ? Color.BLACK : event.getTextColor());
 
         int lineHeight = textLayout.getHeight() / textLayout.getLineCount();
 
@@ -1641,16 +1639,6 @@ public class WeekView extends View {
     public void setEventTextSize(int eventTextSize) {
         mEventTextSize = eventTextSize;
         mEventTextPaint.setTextSize(mEventTextSize);
-        invalidate();
-    }
-
-    public int getEventTextColor() {
-        return mEventTextColor;
-    }
-
-    public void setEventTextColor(int eventTextColor) {
-        mEventTextColor = eventTextColor;
-        mEventTextPaint.setColor(mEventTextColor);
         invalidate();
     }
 
