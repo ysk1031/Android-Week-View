@@ -21,6 +21,8 @@ public class WeekViewEvent {
     private int mColor;
     private int mTextColor;
     private boolean mAllDay;
+    private int category;
+
 
     public WeekViewEvent(){
 
@@ -167,6 +169,14 @@ public class WeekViewEvent {
 
     public void setId(long id) {
         this.mId = id;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     @Override
