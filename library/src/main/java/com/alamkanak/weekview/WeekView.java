@@ -300,8 +300,11 @@ public class WeekView extends View {
                 Collections.reverse(reversedEventRects);
                 for (EventRect event : reversedEventRects) {
                     if (event.rectF != null && e.getX() > event.rectF.left && e.getX() < event.rectF.right && e.getY() > event.rectF.top && e.getY() < event.rectF.bottom) {
-                        mEventClickListener.onEventClick(event.originalEvent, event.rectF);
-                        playSoundEffect(SoundEffectConstants.CLICK);
+                        Calendar selectedTime = getTimeFromPoint(e.getX(), e.getY());
+                        if (selectedTime != null) {
+                            mEventClickListener.onEventClick(event.originalEvent, selectedTime);
+                            playSoundEffect(SoundEffectConstants.CLICK);
+                        }
                         return super.onSingleTapConfirmed(e);
                     }
                 }
@@ -2115,9 +2118,9 @@ public class WeekView extends View {
         /**
          * Triggered when clicked on one existing event
          * @param event: event clicked.
-         * @param eventRect: view containing the clicked event.
+         * @param time: view containing the clicked event.
          */
-        void onEventClick(WeekViewEvent event, RectF eventRect);
+        void onEventClick(WeekViewEvent event, Calendar time);
     }
 
     public interface EventLongPressListener {
