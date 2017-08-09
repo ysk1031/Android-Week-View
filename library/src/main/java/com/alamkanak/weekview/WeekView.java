@@ -10,8 +10,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
@@ -1012,8 +1015,17 @@ public class WeekView extends View {
             bob.append(event.getLocation());
         }
 
+        final int deleteIconDisplay = 1;
+        final float density = mContext.getResources().getDisplayMetrics().density;
+
         int availableHeight = (int) (rect.bottom - originalTop - mEventPadding * 2);
-        int availableWidth = (int) (rect.right - originalLeft - mEventPadding * 2);
+        int availableWidth;
+        float baseTextWidth = rect.right - originalLeft - mEventPadding * 2;
+        if (event.getCategory() == deleteIconDisplay) {
+            availableWidth = (int) (baseTextWidth - 10 * density);
+        } else {
+            availableWidth = (int) baseTextWidth;
+        }
 
         // Get text dimensions.
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
@@ -1026,7 +1038,14 @@ public class WeekView extends View {
             int availableLineCount = availableHeight / lineHeight;
             do {
                 // Ellipsize text to fit into event rect.
-                textLayout = new StaticLayout(TextUtils.ellipsize(bob, mEventTextPaint, availableLineCount * availableWidth, TextUtils.TruncateAt.END), mEventTextPaint, (int) (rect.right - originalLeft - mEventPadding * 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                textLayout = new StaticLayout(
+                        TextUtils.ellipsize(bob, mEventTextPaint, availableLineCount * availableWidth, TextUtils.TruncateAt.END),
+                        mEventTextPaint,
+                        availableWidth,
+                        Layout.Alignment.ALIGN_NORMAL,
+                        1.0f,
+                        0.0f,
+                        false);
 
                 // Reduce line count.
                 availableLineCount--;
@@ -1038,6 +1057,16 @@ public class WeekView extends View {
             canvas.save();
             canvas.translate(originalLeft + mEventPadding, originalTop + mEventPadding);
             textLayout.draw(canvas);
+
+            if (event.getCategory() == deleteIconDisplay) {
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.schedule_delete);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    drawable = (DrawableCompat.wrap(drawable)).mutate();
+                }
+                drawable.setBounds(availableWidth, (int) (2 * density), (int) (availableWidth + 10 * density), (int) (12 * density));
+                drawable.draw(canvas);
+            }
+
             canvas.restore();
         }
     }
