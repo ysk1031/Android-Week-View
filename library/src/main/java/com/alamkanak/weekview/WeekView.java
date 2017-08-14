@@ -1099,7 +1099,7 @@ public class WeekView extends View {
 
         // Get text dimensions.
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-        mEventTextPaint.setColor(event.getTextColor() == 0 ? Color.BLACK : event.getTextColor());
+        mEventTextPaint.setColor(event.getTextColor() == 0 ? Color.parseColor("#526FA2") : event.getTextColor());
 
         int lineHeight = textLayout.getHeight() / textLayout.getLineCount();
 
@@ -2108,7 +2108,10 @@ public class WeekView extends View {
         }
 
         int nearestOrigin = (int) (mCurrentOrigin.x - leftDays * (mWidthPerDay + mColumnGap));
+
+
         if (nearestOrigin != 0 && (mCurrentOrigin.x - nearestOrigin < getXMaxLimit() && mCurrentOrigin.x - nearestOrigin > getXMinLimit())) {
+
             // Stop current animation.
             mScroller.forceFinished(true);
             // Snap to date.
