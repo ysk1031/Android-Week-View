@@ -677,9 +677,11 @@ public class WeekView extends View {
 
         // Clip to paint in left column only.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+            canvas.clipRect(0, mHeaderHeight + mHeaderRowPadding * 2, mHeaderColumnWidth, getHeight(), Region.Op.REPLACE);
         } else {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+            canvas.save();        // IMPORTANT: save current state of clip and matrix (i.e. unclipped state) (let's say it's state #1)
+            canvas.clipRect(0, mHeaderHeight + mHeaderRowPadding * 2, mHeaderColumnWidth, getHeight());
+            canvas.restore();
         }
 
         for (int i = 0; i < 24; i++) {
@@ -689,7 +691,15 @@ public class WeekView extends View {
             String time = getDateTimeInterpreter().interpretTime(i);
             if (time == null)
                 throw new IllegalStateException("A DateTimeInterpreter must not return null time");
-            if (top < getHeight()) canvas.drawText(time, mTimeTextWidth + mHeaderColumnPadding, top + mTimeTextHeight, mTimeTextPaint);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+                if (top < getHeight()) {
+                    canvas.drawText(time, mTimeTextWidth + mHeaderColumnPadding, top + mTimeTextHeight, mTimeTextPaint);
+                }
+            } else {
+                if (top > mHeaderHeight + mHeaderRowPadding * 2 && top < getHeight()) {
+                    canvas.drawText(time, mTimeTextWidth + mHeaderColumnPadding, top + mTimeTextHeight, mTimeTextPaint);
+                }
+            }
         }
     }
 
@@ -777,7 +787,9 @@ public class WeekView extends View {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
             canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
         } else {
+            canvas.save();        // IMPORTANT: save current state of clip and matrix (i.e. unclipped state) (let's say it's state #1)
             canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+            canvas.restore();
         }
 
         // Iterate through each day.
@@ -873,9 +885,11 @@ public class WeekView extends View {
 
         // Hide everything in the first cell (top left corner).
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+            canvas.clipRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
         } else {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+            canvas.save();        // IMPORTANT: save current state of clip and matrix (i.e. unclipped state) (let's say it's state #1)
+            canvas.clipRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2);
+            canvas.restore();
         }
         canvas.drawRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, mHeaderBackgroundPaint);
         if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
@@ -889,9 +903,11 @@ public class WeekView extends View {
         }
         // Clip to paint header row only.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+            canvas.clipRect(mHeaderColumnWidth, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
         } else {
-            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+            canvas.save();        // IMPORTANT: save current state of clip and matrix (i.e. unclipped state) (let's say it's state #1)
+            canvas.clipRect(mHeaderColumnWidth, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2);
+            canvas.restore();
         }
 
         // Draw the header background.
@@ -991,7 +1007,7 @@ public class WeekView extends View {
                             top < getHeight() &&
                             right > mHeaderColumnWidth &&
                             bottom > mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom
-                            ) {
+                    ) {
                         mEventRects.get(i).rectF = new RectF(left, top, right, bottom);
                         mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
                         canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
@@ -1056,7 +1072,7 @@ public class WeekView extends View {
                             top < getHeight() &&
                             right > mHeaderColumnWidth &&
                             bottom > 0
-                            ) {
+                    ) {
                         mEventRects.get(i).rectF = new RectF(left, top, right, bottom);
                         mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
                         canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
