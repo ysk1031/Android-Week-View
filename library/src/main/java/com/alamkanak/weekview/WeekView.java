@@ -676,7 +676,11 @@ public class WeekView extends View {
         canvas.drawRect(0, mHeaderHeight + mHeaderRowPadding * 2, mHeaderColumnWidth, getHeight(), mHeaderColumnBackgroundPaint);
 
         // Clip to paint in left column only.
-        canvas.clipRect(0, mHeaderHeight + mHeaderRowPadding * 2, mHeaderColumnWidth, getHeight(), Region.Op.REPLACE);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+        } else {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+        }
 
         for (int i = 0; i < 24; i++) {
             float top = mHeaderHeight + mHeaderRowPadding * 2 + mCurrentOrigin.y + mHourHeight * i + mHeaderMarginBottom + mTimeTextHeight / 2;
@@ -868,7 +872,11 @@ public class WeekView extends View {
 
 
         // Hide everything in the first cell (top left corner).
-        canvas.clipRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+        } else {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+        }
         canvas.drawRect(0, 0, mTimeTextWidth + mHeaderColumnPadding * 2, mHeaderHeight + mHeaderRowPadding * 2, mHeaderBackgroundPaint);
         if (mHeaderSeparatorColor != DEFAULT_NO_COLOR_FOR_PADDING) {
             Paint paint = new Paint();
@@ -880,7 +888,11 @@ public class WeekView extends View {
             }
         }
         // Clip to paint header row only.
-        canvas.clipRect(mHeaderColumnWidth, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, Region.Op.REPLACE);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight(), Region.Op.REPLACE);
+        } else {
+            canvas.clipRect(mHeaderColumnWidth, mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom, getWidth(), getHeight());
+        }
 
         // Draw the header background.
         canvas.drawRect(0, 0, getWidth(), mHeaderHeight + mHeaderRowPadding * 2, mHeaderBackgroundPaint);
